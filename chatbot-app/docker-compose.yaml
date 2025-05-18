@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  backend:
+    image: chatbot-backend
+    build: ./backend # Path to your backend Dockerfile
+    ports:
+      - "8000:8000" # Map host port 5000 to container port 5000 (adjust as needed)
+    environment:
+      # Add any environment variables your backend needs
+      # DATABASE_URL: "postgresql://user:password@db:5432/mydb"
+      pass:
+    # depends_on:
+      # - db # If you have a database service
+      # pass:
+    networks:
+      - chatbot-network
+
+  frontend:
+    image: chatbot-frontend
+    build: ./frontend # Path to your frontend Dockerfile
+    ports:
+      - "3000:3000" # Map host port 3000 to container port 80 (Nginx default)
+    environment:
+      API_BASE_URL: "http://0.0.0.0:8000" # Adjust if backend is on a different host/port
+      pass:
+    depends_on:
+      - backend
+    networks:
+      - chatbot-network
+
+# Optional: Define other services like a database
+#  db:
+#    image: postgres:13
+#    volumes:
+#      - db_data:/var/lib/postgresql/data/
+#    environment:
+#      POSTGRES_USER: myuser
+#      POSTGRES_PASSWORD: mypassword
+#      POSTGRES_DB: mydb
+#    networks:
+#      - chatbot-network
+
+networks:
+  chatbot-network:
+
+# Optional: Define volumes for persistent data
+# volumes:
+#   db_data:  
