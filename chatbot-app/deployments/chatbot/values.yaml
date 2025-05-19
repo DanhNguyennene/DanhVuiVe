@@ -17,3 +17,5 @@ backend:
   servicePort: 8000
   serviceName: chatbot-backend-svc
   backendApiPath: "/chat"
+ingress:
+  host: chatbot.danhvuive.34.121.113.166.nip.io

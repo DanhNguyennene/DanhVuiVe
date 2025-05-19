@@ -22,11 +22,8 @@ spec:
           imagePullPolicy: {{ .Values.frontend.pullPolicy }}
           ports:
             - containerPort: {{ .Values.frontend.containerPort }}
-          # Environment variables for backend connectivity
           env:
-            - name: BACKEND_SERVICE_HOST
-              value: "{{ .Release.Name }}-backend-svc"
-            - name: BACKEND_SERVICE_PORT
-              value: "{{ .Values.backend.containerPort }}"
-            - name: BACKEND_API_URL
-              value: "http://{{ .Release.Name }}-backend-svc:{{ .Values.backend.containerPort }}"
+            - name: NEXT_PUBLIC_BACKEND_SERVICE_HOST
+              value: "{{ .Values.backend.serviceName }}"
+            - name: NEXT_PUBLIC_BACKEND_SERVICE_PORT
+              value: "{{ .Values.backend.servicePort }}"

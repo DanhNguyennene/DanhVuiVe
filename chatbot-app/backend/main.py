@@ -23,10 +23,10 @@ logger = logging.getLogger(__name__)
 
 # Check for CUDA availability
 if torch.cuda.is_available():
-    device = 0  # Use the first GPU
+    device = 'cuda'  # Use the first GPU
     torch_dtype = torch.float16  # Consider using float16 on GPU
-    device_name = torch.cuda.get_device_name(0)
-    logger.info(f"Using GPU: {device_name}")
+    # device_name = torch.cuda.get_device_name(0)
+    logger.info(f"Using GPU: {device}")
 else:
     device = 'cpu'
     torch_dtype = torch.bfloat16  # bfloat16 is often preferred for CPU with LLMs

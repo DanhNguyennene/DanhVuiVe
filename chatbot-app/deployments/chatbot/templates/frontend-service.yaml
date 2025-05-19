@@ -4,7 +4,7 @@ metadata:
   name: {{ .Values.frontend.serviceName }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app: frontend-svc
+    app: {{ .Release.Name }}-frontend
     release: {{ .Release.Name }}
 spec:
   type: LoadBalancer 

@@ -137,7 +137,11 @@ const ChatbotInterface = () => {
         })),
     { role: "user", content: userMessage.text },
     ]);
-      const response = await fetch('http://backend:8000/chat', {
+
+      const backendHost = process.env.NEXT_PUBLIC_BACKEND_SERVICE_HOST;
+      const backendPort = process.env.NEXT_PUBLIC_BACKEND_SERVICE_PORT;
+      const backendApiUrl = `http://${backendHost}:${backendPort}/chat`;
+      const response = await fetch(backendApiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
