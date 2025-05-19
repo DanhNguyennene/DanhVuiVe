@@ -1,0 +1,4 @@
+kubectl create ns model-serving
+kubens model-serving
+cd deployments/chatbot
+helm upgrade --install chatbot .
