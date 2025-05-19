@@ -121,6 +121,8 @@ const ChatbotInterface = () => {
     setNewMessage('');
     setLoading(true);
     setError(null);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 300000);
 
     try {
       // Add a placeholder for the bot message with typing indicator
@@ -138,9 +140,14 @@ const ChatbotInterface = () => {
     { role: "user", content: userMessage.text },
     ]);
 
-      const backendHost = process.env.NEXT_PUBLIC_BACKEND_SERVICE_HOST;
-      const backendPort = process.env.NEXT_PUBLIC_BACKEND_SERVICE_PORT;
-      const backendApiUrl = `http://${backendHost}:${backendPort}/chat`;
+      // const backendHost = process.env.NEXT_PUBLIC_BACKEND_SERVICE_HOST;
+      // const backendPort = process.env.NEXT_PUBLIC_BACKEND_SERVICE_PORT;
+      // const backendApiUrl = `http://chatbot-backend-svc:8000/chat`;
+      // const backendBaseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
+      const backendBaseUrl = `http://${'chatbot.danhvuive.34.121.113.166.nip.io'}`;
+      // console.log('Backend API URL:', backendBaseUrl);
+      const backendApiUrl = `${backendBaseUrl}/chat`;
+      console.log('Backend API URL:', backendApiUrl);
       const response = await fetch(backendApiUrl, {
         method: 'POST',
         headers: {
@@ -156,10 +163,10 @@ const ChatbotInterface = () => {
                 })),
             { role: "user", content: userMessage.text },
             ],
-        }),
-      });
+        }),signal: AbortSignal.timeout(300000)});
 
       if (!response.ok) {
+
         const errorData = await response.json();
         throw new Error(errorData.detail || 'Failed to get bot response.');
       }
@@ -181,7 +188,9 @@ const ChatbotInterface = () => {
           timestamp: new Date() 
         }
       ]);
-    } finally {
+  } finally {
+      clearTimeout(timeoutId);
+
       setLoading(false);
     }
   };
@@ -243,6 +252,7 @@ const ChatbotInterface = () => {
             </CardTitle>
             <CardDescription className="text-indigo-100 font-medium">
               Contact me at danhvm12345@gmail.com
+              Because of low resources, I can only answer 1 quetion in 5 minutes. PLease be patient : ) 
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">

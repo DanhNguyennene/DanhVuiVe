@@ -11,9 +11,9 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for testing (restrict this in production)
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all methods including OPTIONS
+    allow_methods=["*"], 
     allow_headers=["*"],
 )
 
@@ -57,7 +57,8 @@ except Exception as e:
     raise  # Re-raise the exception so the app doesn't start.  The app will exit.
 
 
-@app.post("/chat/")
+app = FastAPI(redirect_slashes=False)
+@app.post("/chat")
 async def chat(chat_request: ChatRequest) -> ChatResponse:
     """
     Endpoint for generating chatbot responses.
@@ -90,7 +91,7 @@ async def chat(chat_request: ChatRequest) -> ChatResponse:
                         "You are a friendly and conversational AI assistant named DanhVuiVe."
                         "You are created by Danh."    
                     ),}
-        messages = [message.dict() for message in chat_request.messages]
+        messages = [{'role': message.role,'content':message.content} for message in chat_request.messages]
         prompt = [
             template] + messages
         messages = pipe.tokenizer.apply_chat_template(prompt, tokenize=False, add_generation_prompt=True)

@@ -1,0 +1,4 @@
+kubectl create ns nginx-system
+kubens nginx-system
+cd deployments/nginx-ingress
+helm upgrade --install nginx-ingress .

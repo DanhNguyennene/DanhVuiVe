@@ -1,6 +1,7 @@
 {{- if not .Values.controller.customConfigMap -}}
 apiVersion: v1
 kind: ConfigMap
+
 metadata:
   name: {{ include "nginx-ingress.configName" . }}
   namespace: {{ .Release.Namespace }}
