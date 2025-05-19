@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: chatbot-backend
+  labels:
+    app: backend
+    release: {{ .Release.Name }}
+spec:
+  rules:
+  - http:
+      paths:
+      - path: {{ .Values.backend.backendApiPath }}
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Release.Name }}-{{ .Values.backend.serviceName }}
+            port:
+              number: {{ .Values.backend.servicePort | int }}

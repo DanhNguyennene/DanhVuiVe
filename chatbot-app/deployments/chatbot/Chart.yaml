@@ -1,0 +1,18 @@
+apiVersion: v2
+name: chat-bot
+description: My first deployed chat bot
+
+# A chart can be `application` or `library`,
+# we don't use `library` so often
+type: application
+
+# The chart vesion, which should be changed every time
+# you make an update to the chart
+version: 0.1.0
+
+# The version number of the application being deployed
+appVersion: "1.0.0"
+
+maintainers:
+- email: danhvm12345@gmail.com
+  name: danh

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-frontend
+  labels:
+    app: {{ .Release.Name }}-frontend
+    release: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.frontend.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-frontend
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+          imagePullPolicy: {{ .Values.frontend.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.frontend.containerPort }}
+          # Environment variables for backend connectivity
+          env:
+            - name: BACKEND_SERVICE_HOST
+              value: "{{ .Release.Name }}-backend-svc"
+            - name: BACKEND_SERVICE_PORT
+              value: "{{ .Values.backend.containerPort }}"
+            - name: BACKEND_API_URL
+              value: "http://{{ .Release.Name }}-backend-svc:{{ .Values.backend.containerPort }}"
