@@ -6,6 +6,7 @@ metadata:
     app: {{ .Release.Name }}-frontend
     release: {{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
+
 spec:
   replicas: {{ .Values.frontend.replicaCount }}
   selector:
@@ -18,12 +19,14 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
-          imagePullPolicy: {{ .Values.frontend.pullPolicy }}
+          image: "{{ .Values.frontend.image.repository }}@{{ .Values.frontend.image.tag }}"
+          imagePullPolicy: Always
           ports:
             - containerPort: {{ .Values.frontend.containerPort }}
           env:
             - name: NEXT_PUBLIC_BACKEND_SERVICE_HOST
-              value: "{{ .Values.backend.serviceName }}"
-            - name: NEXT_PUBLIC_BACKEND_SERVICE_PORT
-              value: "{{ .Values.backend.servicePort }}"
+              value: 'http://{{ .Values.ingress.host }}'
+  strategy: 
+    type: Recreate
+    rollingUpdate: null
+
