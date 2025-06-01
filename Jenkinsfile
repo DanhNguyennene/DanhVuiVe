@@ -33,6 +33,7 @@ pipeline {
                     # Authenticate gcloud with the service account key
                     gcloud auth activate-service-account --key-file ${GKE_KEY_FILE}
 
+                    apt-get install kubectl
 
                     # Verify gcloud installation
                     gcloud version
@@ -131,6 +132,7 @@ pipeline {
             steps {
                 script {
                     sh """
+                    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
                     helm upgrade --install ${HELM_RELEASE_NAME} ${HELM_CHART_PATH} \
                         --namespace ${KUBE_NAMESPACE} \
                         --set backend.image.repository=${DOCKER_IMAGE_BACKEND} \
