@@ -34,7 +34,6 @@ pipeline {
             steps {
                 dir('chatbot-app/frontend') {
                     script {
-                        // Install dependencies and build the frontend
                         sh '''
                         npm install
                         npm run build
