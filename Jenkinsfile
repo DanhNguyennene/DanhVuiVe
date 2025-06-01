@@ -32,8 +32,7 @@ pipeline {
                     # Authenticate gcloud with the service account key
                     gcloud auth activate-service-account --key-file ${GKE_KEY_FILE}
 
-                    # Install additional components if needed (e.g., kubectl)
-                    gcloud components install kubectl --quiet
+                    sudo apt-get install kubectl
 
                     # Verify gcloud installation
                     gcloud version
