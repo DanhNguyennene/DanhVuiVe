@@ -57,7 +57,7 @@ pipeline {
             steps {
                 script {
                     OPENAI_API_KEY = sh(script: '''
-                        kubectl get secret openai-api-key -n production \
+                        kubectl get secret openai-api-key -n ${KUBE_NAMESPACE} \
                         -o jsonpath="{.data.OPENAI_API_KEY}" | base64 --decode
                     ''', returnStdout: true).trim()
                     echo "Fetched OPENAI_API_KEY: ****"
@@ -115,12 +115,12 @@ pipeline {
             steps {
                 script {
                     BACKEND_SHA = sh(script: """
-                        apt install -y jq \
+                        apt install -y jq 
                         curl -s "https://registry.hub.docker.com/v2/repositories/${DOCKER_IMAGE_BACKEND}/tags/latest"  | jq -r '.images[0].digest'
                     """, returnStdout: true).trim()
 
                     FRONTEND_SHA = sh(script: """
-                        apt install -y jq \
+                        apt install -y jq
                         curl -s "https://registry.hub.docker.com/v2/repositories/${DOCKER_IMAGE_FRONTEND}/tags/latest"  | jq -r '.images[0].digest'
                     """, returnStdout: true).trim()
 
