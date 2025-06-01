@@ -116,12 +116,12 @@ pipeline {
                 script {
                     BACKEND_SHA = sh(script: """
                         apt install -y jq 
-                        curl -s "https://registry.hub.docker.com/v2/repositories/${DOCKER_IMAGE_BACKEND}/tags/latest"  | jq -r '.images[0].digest'
+                        curl -s "https://registry.hub.docker.com/v2/repositories/${DOCKER_IMAGE_BACKEND}/tags/latest" | jq -r '.images[0].digest' | sed 's/sha256://g' | cut -c1-12
                     """, returnStdout: true).trim()
 
                     FRONTEND_SHA = sh(script: """
                         apt install -y jq
-                        curl -s "https://registry.hub.docker.com/v2/repositories/${DOCKER_IMAGE_FRONTEND}/tags/latest"  | jq -r '.images[0].digest'
+                        curl -s "https://registry.hub.docker.com/v2/repositories/${DOCKER_IMAGE_FRONTEND}/tags/latest" | jq -r '.images[0].digest' | sed 's/sha256://g' | cut -c1-12
                     """, returnStdout: true).trim()
 
                     echo "Backend Image SHA: ${BACKEND_SHA}"
