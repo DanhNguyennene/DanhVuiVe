@@ -25,8 +25,20 @@ pipeline {
 
     stages {
 
+        stage('Build Frontend') {
+            steps {
+                dir('chatbot-app/frontend') {
+                    script {
+                        // Install dependencies and build the frontend
+                        sh '''
+                        npm install
+                        npm run build
+                        '''
+                    }
+                }
+            }
+        }
         stage('Installing GCLOUD SDK') {
-
             steps {
                 script {
                     sh '''
