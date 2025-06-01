@@ -134,7 +134,11 @@ pipeline {
                 steps {
                     script {
                     sh 'curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash'
-                    
+                    echo "BACKEND_SHA: ${BACKEND_SHA}"
+                    echo "FRONTEND_SHA: ${FRONTEND_SHA}"
+                    echo "HELM_RELEASE_NAME: ${HELM_RELEASE_NAME}"
+                    echo "HELM_CHART_PATH: ${HELM_CHART_PATH}"
+                    echo "KUBE_NAMESPACE: ${KUBE_NAMESPACE}"
                     // Then run the Helm upgrade command separately
                     sh """
                         helm upgrade --install ${HELM_RELEASE_NAME} ${HELM_CHART_PATH} \\
