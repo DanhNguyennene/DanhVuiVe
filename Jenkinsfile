@@ -142,7 +142,7 @@ pipeline {
                     // Then run the Helm upgrade command separately
                     sh """
                         helm upgrade --install ${HELM_RELEASE_NAME} ${HELM_CHART_PATH} \\
-                            --n ${KUBE_NAMESPACE} \\
+                            --namespace ${KUBE_NAMESPACE} \\
                             --set backend.image.repository=${DOCKER_IMAGE_BACKEND} \\
                             --set backend.image.tag=${BACKEND_SHA} \\
                             --set frontend.image.repository=${DOCKER_IMAGE_FRONTEND} \\
