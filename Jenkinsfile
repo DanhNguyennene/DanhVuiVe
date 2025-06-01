@@ -33,7 +33,6 @@ pipeline {
                     # Authenticate gcloud with the service account key
                     gcloud auth activate-service-account --key-file ${GKE_KEY_FILE}
 
-                    apt-get install kubectl
 
                     # Verify gcloud installation
                     gcloud version
@@ -115,12 +114,10 @@ pipeline {
             steps {
                 script {
                     BACKEND_SHA = sh(script: """
-                        apt install -y jq 
                         curl -s "https://registry.hub.docker.com/v2/repositories/${DOCKER_IMAGE_BACKEND}/tags/latest"  | jq -r '.images[0].digest'
                     """, returnStdout: true).trim()
 
                     FRONTEND_SHA = sh(script: """
-                        apt install -y jq
                         curl -s "https://registry.hub.docker.com/v2/repositories/${DOCKER_IMAGE_FRONTEND}/tags/latest"  | jq -r '.images[0].digest'
                     """, returnStdout: true).trim()
 
@@ -134,7 +131,6 @@ pipeline {
             steps {
                 script {
                     sh """
-                    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
                     helm upgrade --install ${HELM_RELEASE_NAME} ${HELM_CHART_PATH} \
                         --namespace ${KUBE_NAMESPACE} \
                         --set backend.image.repository=${DOCKER_IMAGE_BACKEND} \
