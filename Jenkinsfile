@@ -134,6 +134,7 @@ pipeline {
             steps {
                 script {
                     sh """
+                    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
                     helm upgrade --install ${HELM_RELEASE_NAME} ${HELM_CHART_PATH} \
                         --namespace ${KUBE_NAMESPACE} \
                         --set backend.image.repository=${DOCKER_IMAGE_BACKEND} \
