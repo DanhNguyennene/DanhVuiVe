@@ -20,7 +20,6 @@ pipeline {
 
     stages {
 
-    stages {
         stage('Installing GCLOUD SDK') {
             agent {
                 docker {
