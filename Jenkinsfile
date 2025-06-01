@@ -33,7 +33,6 @@ pipeline {
             }
         }
     }
-    stages {
         stage('Fetch OpenAI API Key') {
             steps {
                 script {
