@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'google/cloud-sdk:latest'
+        }
+    }
 
     environment {
         // Define environment variables
@@ -21,11 +25,7 @@ pipeline {
     stages {
 
         stage('Installing GCLOUD SDK') {
-            agent {
-                docker {
-                    image 'google/cloud-sdk:latest' // Use the official gcloud SDK image
-                }
-            }
+
             steps {
                 script {
                     sh '''
