@@ -145,7 +145,18 @@ pipeline {
                     // Then run the Helm upgrade command separately
                     sh """
                         helm upgrade --install ${HELM_RELEASE_NAME} ${HELM_CHART_PATH} \\
-                            --n ${KUBE_NAMESPACE} \\
+                            --            sh 'apt update -qq && apt install -y jq >/dev/null 2>&1'
+            
+            // Then get digest in separate command
+            BACKEND_SHA = sh(
+                script: """curl -s "https://registry.hub.docker.com/v2/repositories/${DOCKER_IMAGE_BACKEND}/tags/latest" | jq -r '.images[0].digest'""",
+                returnStdout: true
+            ).trim()
+            
+            FRONTEND_SHA = sh(
+                script: """curl -s "https://registry.hub.docker.com/v2/repositories/${DOCKER_IMAGE_FRONTEND}/tags/latest" | jq -r '.images[0].digest'""",
+                returnStdout: true
+            ).trim() ${KUBE_NAMESPACE} \\
                             --set backend.image.repository=${DOCKER_IMAGE_BACKEND} \\
                             --set backend.image.tag=${BACKEND_SHA} \\
                             --set frontend.image.repository=${DOCKER_IMAGE_FRONTEND} \\
