@@ -11,7 +11,7 @@ pipeline {
         DOCKER_IMAGE_FRONTEND = "danhvm12345/chatbot-frontend"
         DOCKER_TAG_BACKEND = "latest"
         DOCKER_TAG_FRONTEND = "latest"
-        DOCKER_TOKEN = credentials('docker')
+        // DOCKER_TOKEN = credentials('docker')
         BACKEND_SHA = ""
         FRONTEND_SHA = ""
         KUBE_NAMESPACE = "model-serving" // Target Kubernetes namespace
