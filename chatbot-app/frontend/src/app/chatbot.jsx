@@ -145,6 +145,7 @@ const ChatbotInterface = () => {
       // const backendApiUrl = `http://chatbot-backend-svc:8000/chat`;
       // const backendBaseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
       const backendBaseUrl = `http://${'chatbot.danhvuive.34.121.113.166.nip.io'}`;
+      // const backendBaseUrl = `http://${'localhost:8000'}`;
       // console.log('Backend API URL:', backendBaseUrl);
       const backendApiUrl = `${backendBaseUrl}/chat`;
       console.log('Backend API URL:', backendApiUrl);
@@ -251,8 +252,10 @@ const ChatbotInterface = () => {
               DanhVuiVe
             </CardTitle>
             <CardDescription className="text-indigo-100 font-medium">
-              Contact me at danhvm12345@gmail.com
-              Because of low resources, I can only answer 1 quetion in 5 minutes. PLease be patient : ) 
+
+          Find me at danhvm12345@gmail.com : D.
+          <br />
+          Powered by GPT-4o
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">

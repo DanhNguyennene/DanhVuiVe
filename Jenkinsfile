@@ -1,0 +1,156 @@
+pipeline {
+    agent any
+
+    environment {
+        // Define environment variables
+        DOCKER_IMAGE_BACKEND = "danhvm12345/chatbot-backend"
+        DOCKER_IMAGE_FRONTEND = "danhvm12345/chatbot-frontend"
+        DOCKER_TAG_BACKEND = "latest"
+        DOCKER_TAG_FRONTEND = "latest"
+        BACKEND_SHA = ""
+        FRONTEND_SHA = ""
+        KUBE_NAMESPACE = "model-serving" // Target Kubernetes namespace
+        HELM_RELEASE_NAME = "chatbot" // Helm release name
+        HELM_CHART_PATH = "chatbot-app/deployments/chatbot/values.yaml"
+        GKE_KEY_FILE = credentials('gke')
+        GKE_CLUSTER = "danhvuive"
+        GKE_ZONE = "us-central1-c"
+        GKE_PROJECT = "testing-api-1712477161338"
+        OPENAI_API_KEY = ""
+    }
+
+    stages {
+
+        stage('Authenticate with GKE') {
+            steps {
+                script {
+                    // Authenticate Jenkins with GKE using gcloud
+                    sh """
+                    gcloud auth activate-service-account --key-file ${GKE_KEY_FILE}
+                    gcloud container clusters get-credentials ${GKE_CLUSTER} --zone ${GKE_ZONE} --project ${GKE_PROJECT}
+                    """
+                }
+            }
+        }
+    }
+    stages {
+        stage('Fetch OpenAI API Key') {
+            steps {
+                script {
+                    // Fetch the secret from Kubernetes and decode it
+                    OPENAI_API_KEY = sh(script: '''
+                        kubectl get secret openai-api-key -n production \
+                        -o jsonpath="{.data.OPENAI_API_KEY}" | base64 --decode
+                    ''', returnStdout: true).trim()
+                    echo "Fetched OPENAI_API_KEY: ****"
+                }
+            }
+        }
+        stage('Build Docker Images') {
+            parallel {
+                stage('Build Backend Image') {
+                    steps {
+                        dir('backend') {
+                            script {
+                                dockerImageBackend = docker.build("${DOCKER_IMAGE_BACKEND}:${DOCKER_TAG_BACKEND}")
+                            }
+                        }
+                    }
+                }
+                stage('Build Frontend Image') {
+                    steps {
+                        dir('frontend') {
+                            script {
+                                dockerImageFrontend = docker.build("${DOCKER_IMAGE_FRONTEND}:${DOCKER_TAG_FRONTEND}")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Push Docker Images') {
+            parallel {
+                stage('Push Backend Image') {
+                    steps {
+                        script {
+                            docker.withRegistry('https://registry.hub.docker.com',  'docker-hub-credentials') {
+                                dockerImageBackend.push()
+                            }
+                        }
+                    }
+                }
+                stage('Push Frontend Image') {
+                    steps {
+                        script {
+                            docker.withRegistry('https://registry.hub.docker.com',  'docker-hub-credentials') {
+                                dockerImageFrontend.push()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    stages {
+        stage('Fetch Latest SHA') {
+            steps {
+                script {
+                    // Fetch the latest SHA for the backend image
+                    BACKEND_SHA = sh(script: """
+                        curl -s "https://registry.hub.docker.com/v2/repositories/${DOCKER_IMAGE_BACKEND}/tags/latest"  | jq -r '.images[0].digest'
+                    """, returnStdout: true).trim()
+
+                    // Fetch the latest SHA for the frontend image
+                    FRONTEND_SHA = sh(script: """
+                        curl -s "https://registry.hub.docker.com/v2/repositories/${DOCKER_IMAGE_FRONTEND}/tags/latest"  | jq -r '.images[0].digest'
+                    """, returnStdout: true).trim()
+
+                    echo "Backend Image SHA: ${BACKEND_SHA}"
+                    echo "Frontend Image SHA: ${FRONTEND_SHA}"
+                }
+            }
+        }
+        stage('Update Helm Values') {
+            steps {
+                script {
+                    // Update the Helm values file with the latest image tags
+                    sh """
+                    sed -i 's|repository: .*|repository: ${DOCKER_IMAGE_BACKEND}|' ${HELM_CHART_PATH}/values.yaml
+                    sed -i 's|tag: .*|tag: "${DOCKER_TAG_BACKEND}"|' ${HELM_CHART_PATH}/values.yaml
+                    sed -i 's|repository: .*|repository: ${DOCKER_IMAGE_FRONTEND}|' ${HELM_CHART_PATH}/values.yaml
+                    sed -i 's|tag: .*|tag: "${DOCKER_TAG_FRONTEND}"|' ${HELM_CHART_PATH}/values.yaml
+                    """
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes with Helm') {
+            steps {
+                script {
+                    // Deploy the application using Helm
+                    sh """
+                    helm upgrade --install ${HELM_RELEASE_NAME} ${HELM_CHART_PATH} \
+                        --namespace ${KUBE_NAMESPACE} \
+                        --set backend.image.repository=${DOCKER_IMAGE_BACKEND} \
+                        --set backend.image.tag=${BACKEND_SHA} \
+                        --set frontend.image.repository=${DOCKER_IMAGE_FRONTEND} \
+                        --set frontend.image.tag=${FRONTEND_SHA} \
+                        --set ingress.host=chatbot.danhvuive.34.121.113.166.nip.io
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Pipeline completed successfully!"
+        }
+        failure {
+            echo "Pipeline failed."
+            mail to: 'danhvm12345@gmail.com',
+                 subject: "Jenkins Pipeline Failed: ${currentBuild.fullDisplayName}",
+                 body: "The pipeline failed at stage: ${currentBuild.currentResult}"
+        }
+    }
+}

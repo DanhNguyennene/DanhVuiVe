@@ -22,3 +22,9 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: {{ .Values.backend.containerPort }}
+          env:
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openai-api-key
+                  key: OPENAI_API_KEY
