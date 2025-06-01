@@ -19,22 +19,30 @@ pipeline {
     }
 
     stages {
+
+    stages {
         stage('Installing GCLOUD SDK') {
             agent {
                 docker {
-                    image 'python:3.12' 
+                    image 'google/cloud-sdk:latest' // Use the official gcloud SDK image
                 }
             }
             steps {
                 script {
                     sh '''
-                    curl https://sdk.cloud.google.com | bash
-                    source $HOME/google-cloud-sdk/path.bash.inc
-                    gcloud components install kubectl
+                    # Authenticate gcloud with the service account key
+                    gcloud auth activate-service-account --key-file ${GKE_KEY_FILE}
+
+                    # Install additional components if needed (e.g., kubectl)
+                    gcloud components install kubectl --quiet
+
+                    # Verify gcloud installation
+                    gcloud version
                     '''
                 }
             }
         }
+
         stage('Authenticate with GKE') {
             steps {
                 script {
