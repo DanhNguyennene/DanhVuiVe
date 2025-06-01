@@ -92,7 +92,7 @@ pipeline {
                 stage('Push Backend Image') {
                     steps {
                         script {
-                            docker.withRegistry('https://registry.hub.docker.com',  'docker-hub-credentials') {
+                            docker.withRegistry('https://registry.hub.docker.com',  'docker') {
                                 dockerImageBackend.push()
                             }
                         }
@@ -101,7 +101,7 @@ pipeline {
                 stage('Push Frontend Image') {
                     steps {
                         script {
-                            docker.withRegistry('https://registry.hub.docker.com',  'docker-hub-credentials') {
+                            docker.withRegistry('https://registry.hub.docker.com',  'docker') {
                                 dockerImageFrontend.push()
                             }
                         }
