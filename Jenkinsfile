@@ -32,7 +32,6 @@ pipeline {
                 }
             }
         }
-    }
         stage('Fetch OpenAI API Key') {
             steps {
                 script {
@@ -79,15 +78,15 @@ pipeline {
                         }
                     }
                 }
-                stage('Push Frontend Image') {
-                    steps {
-                        script {
-                            docker.withRegistry('https://registry.hub.docker.com',  'docker-hub-credentials') {
-                                dockerImageFrontend.push()
-                            }
-                        }
+        stage('Push Frontend Image') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com',  'docker-hub-credentials') {
+                        dockerImageFrontend.push()
                     }
                 }
+            }
+        }
             }
         }
     stages {
@@ -139,6 +138,7 @@ pipeline {
                 }
             }
         }
+    }
     }
 
     post {
