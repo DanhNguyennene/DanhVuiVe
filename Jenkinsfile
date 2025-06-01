@@ -26,6 +26,11 @@ pipeline {
     stages {
 
         stage('Build Frontend') {
+            agent {
+                docker {
+                    image 'node:18'
+                }
+            }
             steps {
                 dir('chatbot-app/frontend') {
                     script {
