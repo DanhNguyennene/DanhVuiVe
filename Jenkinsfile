@@ -19,6 +19,17 @@ pipeline {
     }
 
     stages {
+        stage('Installing GCLOUD SDK') {
+            steps {
+                script {
+                    sh '''
+                    curl https://sdk.cloud.google.com | bash
+                    source $HOME/google-cloud-sdk/path.bash.inc
+                    gcloud components install kubectl
+                    '''
+                }
+            }
+        }
         stage('Authenticate with GKE') {
             steps {
                 script {
