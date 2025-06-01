@@ -68,7 +68,7 @@ pipeline {
             parallel {
                 stage('Build Backend Image') {
                     steps {
-                        dir('backend') {
+                        dir('chatbot-app/backend') {
                             script {
                                 dockerImageBackend = docker.build("${DOCKER_IMAGE_BACKEND}:${DOCKER_TAG_BACKEND}")
                             }
@@ -77,7 +77,7 @@ pipeline {
                 }
                 stage('Build Frontend Image') {
                     steps {
-                        dir('frontend') {
+                        dir('chatbot-app/frontend') {
                             script {
                                 dockerImageFrontend = docker.build("${DOCKER_IMAGE_FRONTEND}:${DOCKER_TAG_FRONTEND}")
                             }
