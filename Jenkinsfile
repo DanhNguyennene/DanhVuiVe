@@ -19,12 +19,12 @@ pipeline {
     }
 
     stages {
-        agent {
-            docker {
-                image 'python:3.12' 
-            }
-        }
         stage('Installing GCLOUD SDK') {
+            agent {
+                docker {
+                    image 'python:3.12' 
+                }
+            }
             steps {
                 script {
                     sh '''
