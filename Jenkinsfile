@@ -11,6 +11,7 @@ pipeline {
         DOCKER_IMAGE_FRONTEND = "danhvm12345/chatbot-frontend"
         DOCKER_TAG_BACKEND = "latest"
         DOCKER_TAG_FRONTEND = "latest"
+        DOCKER_TOKEN = credentials('docker')
         BACKEND_SHA = ""
         FRONTEND_SHA = ""
         KUBE_NAMESPACE = "model-serving" // Target Kubernetes namespace
@@ -92,7 +93,7 @@ pipeline {
                 stage('Push Backend Image') {
                     steps {
                         script {
-                            docker.withRegistry('https://registry.hub.docker.com',  'docker') {
+                            docker.withRegistry('https://registry.hub.docker.com',  ${DOCKER_TOKEN}) {
                                 dockerImageBackend.push()
                             }
                         }
@@ -101,7 +102,7 @@ pipeline {
                 stage('Push Frontend Image') {
                     steps {
                         script {
-                            docker.withRegistry('https://registry.hub.docker.com',  'docker') {
+                            docker.withRegistry('https://registry.hub.docker.com',  ${DOCKER_TOKEN}) {
                                 dockerImageFrontend.push()
                             }
                         }
